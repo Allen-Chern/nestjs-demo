@@ -6,8 +6,14 @@ import { entities } from '@@database/entities';
 import { Provider } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
-const { DATABASE_HOST, DATABASE_PORT, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_DATABASE } =
-  process.env;
+const {
+  DATABASE_HOST,
+  DATABASE_PORT,
+  DATABASE_USERNAME,
+  DATABASE_PASSWORD,
+  DATABASE_DATABASE,
+  DATABASE_SSL,
+} = process.env;
 
 const envs = {
   DATABASE_HOST,
@@ -15,6 +21,7 @@ const envs = {
   DATABASE_USERNAME,
   DATABASE_PASSWORD,
   DATABASE_DATABASE,
+  DATABASE_SSL,
 };
 
 Object.entries(envs).forEach(([key, value]) => {
@@ -41,6 +48,8 @@ export const initDb = async () => {
     useUTC: true,
     extra: { max: 10 },
     synchronize: false,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ssl: envs.DATABASE_SSL!.toLowerCase() === 'true',
   });
 
   await dataSource.initialize();

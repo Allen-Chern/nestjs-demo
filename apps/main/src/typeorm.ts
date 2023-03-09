@@ -20,7 +20,7 @@ export const dataSource: Provider = {
       useUTC: true,
       extra: { max: 10 },
       synchronize: false,
-      ssl: true,
+      ssl: envs.DATABASE_SSL.toLowerCase() === 'true',
     });
 
     await dataSource.initialize();
