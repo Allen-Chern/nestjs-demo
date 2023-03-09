@@ -5,6 +5,7 @@ configEnvFile('.env');
 import { devCorsOptions } from '@@common/misc/dev-cors-options';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { envs } from './envs';
 
@@ -16,6 +17,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.use(cookieParser());
 
   if (envs.NODE_ENV !== 'production') {
     app.enableCors(devCorsOptions);
