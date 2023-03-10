@@ -24,6 +24,6 @@ export class UserDb {
   @Column('timestamptz', { default: () => 'now()' })
   createdAt: Date;
 
-  @Column('timestamptz')
-  updatedAt: Date;
+  @Column('timestamptz', { nullable: true })
+  updatedAt: Date | null;
 }

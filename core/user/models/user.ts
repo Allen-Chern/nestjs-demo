@@ -8,5 +8,5 @@ export class User {
   providerType: ProviderType;
   openId: string | null;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
 }
