@@ -5,11 +5,12 @@ import { AuthController } from './controllers/auth.controller';
 import { AccessJwt } from './services/access-jwt';
 import { AuthService } from './services/auth';
 import { FacebookStrategy } from './services/facebook-strategy';
+import { GoogleStrategy } from './services/google-strategy';
 import { TokenManager } from './services/token-manager';
 
 @Module({
   imports: [UserQueryModule, UserCreateModule],
-  providers: [AccessJwt, TokenManager, AuthService, FacebookStrategy],
+  providers: [AccessJwt, TokenManager, AuthService, FacebookStrategy, GoogleStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

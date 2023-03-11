@@ -33,7 +33,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   ): Promise<any> {
     const { id, name, emails } = profile;
     assert(name, 'name is undefined.');
-    assert(emails, 'name is undefined.');
+    assert(emails, 'emails is undefined.');
 
     const payload: FacebookPayload = {
       openId: id,

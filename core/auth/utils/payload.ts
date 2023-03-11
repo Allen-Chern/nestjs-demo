@@ -10,4 +10,11 @@ export type FacebookPayload = {
   type: 'FACEBOOK';
 };
 
-export type Payload = UserPayload | FacebookPayload;
+export type GooglePayload = {
+  openId: string;
+  email: string;
+  name: string;
+  type: 'GOOGLE';
+};
+
+export type Payload = UserPayload | FacebookPayload | GooglePayload;

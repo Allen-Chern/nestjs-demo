@@ -19,7 +19,7 @@ import { AuthService } from '../services/auth';
 import { TokenManager } from '../services/token-manager';
 import { Auth } from '../utils/auth-guard';
 import { Request } from '../utils/context';
-import { FacebookPayload } from '../utils/payload';
+import { FacebookPayload, GooglePayload } from '../utils/payload';
 
 class LoginInput {
   email: string;
@@ -64,6 +64,22 @@ export class AuthController {
     const user = await this.authService.queryOrCreateUserByFacebookProfile(
       req.user as FacebookPayload,
     );
+
+    await this.tokenManager.setToken(res, user);
+
+    res.redirect(this.frontendUrl);
+  }
+
+  @UseGuards(AuthGuard('google'))
+  @Get('google')
+  async googleLogin() {
+    return HttpStatus.OK;
+  }
+
+  @UseGuards(AuthGuard('google'))
+  @Get('google/callback')
+  async googleLoginCallback(@Req() req: Request, @Res() res: Response) {
+    const user = await this.authService.queryOrCreateUserByGoogleProfile(req.user as GooglePayload);
 
     await this.tokenManager.setToken(res, user);
 

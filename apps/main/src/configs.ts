@@ -5,6 +5,9 @@ import {
   FACEBOOK_APP_SECRET_TOKEN,
   FACEBOOK_CALLBACK_URL_TOKEN,
   FRONTEND_URL_TOKEN,
+  GOOGLE_APP_ID_TOKEN,
+  GOOGLE_APP_SECRET_TOKEN,
+  GOOGLE_CALLBACK_URL_TOKEN,
 } from '@@core/auth/config';
 import { Provider } from '@nestjs/common';
 import { envs } from './envs';
@@ -29,6 +32,18 @@ export const configs: Provider[] = [
   {
     provide: FACEBOOK_CALLBACK_URL_TOKEN,
     useValue: envs.FACEBOOK_CALLBACK_URL,
+  },
+  {
+    provide: GOOGLE_APP_ID_TOKEN,
+    useValue: envs.GOOGLE_APP_ID,
+  },
+  {
+    provide: GOOGLE_APP_SECRET_TOKEN,
+    useValue: envs.GOOGLE_APP_SECRET,
+  },
+  {
+    provide: GOOGLE_CALLBACK_URL_TOKEN,
+    useValue: envs.GOOGLE_CALLBACK_URL,
   },
   {
     provide: FRONTEND_URL_TOKEN,

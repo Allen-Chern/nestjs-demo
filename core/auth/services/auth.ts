@@ -2,7 +2,7 @@ import { Argon2 } from '@@common/helpers/argon2';
 import { CreateUserService } from '@@core/user/services/create-user';
 import { QueryUserService } from '@@core/user/services/query-user';
 import { Inject, Injectable } from '@nestjs/common';
-import { FacebookPayload } from '../utils/payload';
+import { FacebookPayload, GooglePayload } from '../utils/payload';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +19,19 @@ export class AuthService {
     let user = await this.queryUserService.queryByFacebookId(input.openId);
     if (!user) {
       user = await this.createUserService.createFacebookUser({
+        email: input.email,
+        name: input.name,
+        openId: input.openId,
+      });
+    }
+
+    return user;
+  }
+
+  async queryOrCreateUserByGoogleProfile(input: GooglePayload) {
+    let user = await this.queryUserService.queryByGoogleId(input.openId);
+    if (!user) {
+      user = await this.createUserService.createGoogleUser({
         email: input.email,
         name: input.name,
         openId: input.openId,
