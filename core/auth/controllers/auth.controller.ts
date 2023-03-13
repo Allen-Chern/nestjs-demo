@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
-import { FRONTEND_URL_TOKEN } from '../config';
+import { FRONTEND_DASHBOARD_URL_TOKEN } from '../config';
 import { LoginDto } from '../dto/login';
 import { AuthService } from '../services/auth';
 import { TokenManager } from '../services/token-manager';
@@ -33,8 +33,8 @@ export class AuthController {
   @Inject(TokenManager)
   private tokenManager: TokenManager;
 
-  @Inject(FRONTEND_URL_TOKEN)
-  private frontendUrl: string;
+  @Inject(FRONTEND_DASHBOARD_URL_TOKEN)
+  private frontendDashboardUrl: string;
 
   @Post('login')
   async login(@Req() req: Request, @Res() res: Response, @Body() input: LoginDto) {
@@ -45,7 +45,7 @@ export class AuthController {
 
     await this.tokenManager.setToken(res, user);
 
-    res.redirect(this.frontendUrl);
+    res.redirect(this.frontendDashboardUrl);
   }
 
   @UseGuards(AuthGuard('facebook'))
@@ -63,7 +63,7 @@ export class AuthController {
 
     await this.tokenManager.setToken(res, user);
 
-    res.redirect(this.frontendUrl);
+    res.redirect(this.frontendDashboardUrl);
   }
 
   @UseGuards(AuthGuard('google'))
@@ -79,7 +79,7 @@ export class AuthController {
 
     await this.tokenManager.setToken(res, user);
 
-    res.redirect(this.frontendUrl);
+    res.redirect(this.frontendDashboardUrl);
   }
 
   @Auth()

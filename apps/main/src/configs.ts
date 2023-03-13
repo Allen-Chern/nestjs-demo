@@ -4,7 +4,7 @@ import {
   FACEBOOK_APP_ID_TOKEN,
   FACEBOOK_APP_SECRET_TOKEN,
   FACEBOOK_CALLBACK_URL_TOKEN,
-  FRONTEND_URL_TOKEN,
+  FRONTEND_DASHBOARD_URL_TOKEN,
   GOOGLE_APP_ID_TOKEN,
   GOOGLE_APP_SECRET_TOKEN,
   GOOGLE_CALLBACK_URL_TOKEN,
@@ -12,6 +12,7 @@ import {
 import { USER_VERIFICATION_EXPIRES_IN_MINUTES_TOKEN } from '@@core/user-verification/config';
 import { PASSWORD_REGEXP_TOKEN } from '@@core/user/config';
 import { Provider } from '@nestjs/common';
+import urlJoin from 'url-join';
 import { envs } from './envs';
 
 export const configs: Provider[] = [
@@ -33,7 +34,7 @@ export const configs: Provider[] = [
   },
   {
     provide: FACEBOOK_CALLBACK_URL_TOKEN,
-    useValue: envs.FACEBOOK_CALLBACK_URL,
+    useValue: urlJoin(envs.BACKEND_API_BASE_URL, envs.FACEBOOK_CALLBACK_PATH),
   },
   {
     provide: GOOGLE_APP_ID_TOKEN,
@@ -45,11 +46,11 @@ export const configs: Provider[] = [
   },
   {
     provide: GOOGLE_CALLBACK_URL_TOKEN,
-    useValue: envs.GOOGLE_CALLBACK_URL,
+    useValue: urlJoin(envs.BACKEND_API_BASE_URL, envs.GOOGLE_CALLBACK_PATH),
   },
   {
-    provide: FRONTEND_URL_TOKEN,
-    useValue: envs.FRONTEND_URL,
+    provide: FRONTEND_DASHBOARD_URL_TOKEN,
+    useValue: envs.FRONTEND_BASE_URL,
   },
   {
     provide: PASSWORD_REGEXP_TOKEN,
