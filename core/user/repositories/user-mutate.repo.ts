@@ -54,6 +54,21 @@ export class UserMutateRepo {
     return this.userFactory.createUser(userDb);
   }
 
+  async update(user: User, name: string, queryRunner?: QueryRunner) {
+    const currentTime = new Date();
+
+    await this.dataSource
+      .createQueryBuilder(queryRunner)
+      .update(UserDb)
+      .set({ name, updatedAt: currentTime })
+      .whereInIds(user.id)
+      .execute();
+    user.name = name;
+    user.updatedAt = currentTime;
+
+    return user;
+  }
+
   async activate(user: User, queryRunner?: QueryRunner) {
     const currentTime = new Date();
 

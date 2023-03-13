@@ -7,6 +7,7 @@ import { QueryUserService } from '@@core/user/services/query-user';
 import { Body, Controller, HttpStatus, Inject, Param, Post, Put, Req } from '@nestjs/common';
 import { ChangePasswordDto } from '../dto/change-password';
 import { RegisterDto } from '../dto/register';
+import { UpdateInfoDto } from '../dto/update-info';
 import { ProviderType } from '../models/provider-type';
 import { PasswordService } from '../services/password';
 import { RegisterService } from '../services/register';
@@ -128,6 +129,19 @@ export class UserController {
     }
 
     await this.updateUserService.updatePassword(user, input.newPassword);
+
+    return HttpStatus.OK;
+  }
+
+  @Auth()
+  @Put('updateInfo')
+  async updateInfo(@Req() req: Request, @Body() input: UpdateInfoDto) {
+    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
+
+    const user = await this.queryUserService.queryById(req.user.id);
+    assert(user, `user not found: ${req.user.id}`);
+
+    await this.updateUserService.updateInfo(user, input.name);
 
     return HttpStatus.OK;
   }

@@ -34,4 +34,10 @@ export class UpdateUserService {
 
     return user;
   }
+
+  async updateInfo(user: User, name: string) {
+    user = await this.userMutateRepo.update(user, name);
+
+    return user;
+  }
 }
