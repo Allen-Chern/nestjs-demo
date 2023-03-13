@@ -46,4 +46,21 @@ export class RegisterService {
 
     return result;
   }
+
+  async resendVerification(userId: string) {
+    const result = await runTransaction(this.dataSource)(async (t) => {
+      const verification = await this.createUserVerificationService.create(userId);
+
+      t.pushOnCommited(() =>
+        this.eventEmitter.emit(
+          UserVerificationCreatedEvent.token,
+          new UserVerificationCreatedEvent(verification.id),
+        ),
+      );
+
+      return verification;
+    });
+
+    return result;
+  }
 }

@@ -1,7 +1,9 @@
 import { assert } from '@@common/misc/assert';
+import { Auth } from '@@core/auth/utils/auth-guard';
+import { Request } from '@@core/auth/utils/context';
 import { QueryUserVerificationService } from '@@core/user-verification/services/query-user-verification';
 import { QueryUserService } from '@@core/user/services/query-user';
-import { Body, Controller, HttpStatus, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Inject, Param, Post, Put, Req } from '@nestjs/common';
 import { RegisterDto } from '../dto/register';
 import { PasswordService } from '../services/password';
 import { RegisterService } from '../services/register';
@@ -74,5 +76,15 @@ export class UserController {
     }
 
     return HttpStatus.OK;
+  }
+
+  @Auth()
+  @Post('resendVerification')
+  async resendVerification(@Req() req: Request) {
+    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
+
+    await this.registerService.resendVerification(req.user.id);
+
+    return HttpStatus.CREATED;
   }
 }
