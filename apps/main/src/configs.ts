@@ -9,6 +9,7 @@ import {
   GOOGLE_APP_SECRET_TOKEN,
   GOOGLE_CALLBACK_URL_TOKEN,
 } from '@@core/auth/config';
+import { FRONTEND_VERIFICATION_URL_TOKEN } from '@@core/misc/email/config';
 import { USER_VERIFICATION_EXPIRES_IN_MINUTES_TOKEN } from '@@core/user-verification/config';
 import { PASSWORD_REGEXP_TOKEN } from '@@core/user/config';
 import { Provider } from '@nestjs/common';
@@ -50,6 +51,10 @@ export const configs: Provider[] = [
   {
     provide: FRONTEND_DASHBOARD_URL_TOKEN,
     useValue: envs.FRONTEND_BASE_URL,
+  },
+  {
+    provide: FRONTEND_VERIFICATION_URL_TOKEN,
+    useValue: `${envs.FRONTEND_BASE_URL}/${envs.FRONTEND_VERIFICATION_PATH}`,
   },
   {
     provide: PASSWORD_REGEXP_TOKEN,
