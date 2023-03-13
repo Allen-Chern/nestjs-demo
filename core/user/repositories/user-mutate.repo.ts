@@ -60,11 +60,26 @@ export class UserMutateRepo {
     await this.dataSource
       .createQueryBuilder(queryRunner)
       .update(UserDb)
-      .set({ isActivate: true, activatedAt: currentTime })
+      .set({ isActivate: true, activatedAt: currentTime, updatedAt: currentTime })
       .whereInIds(user.id)
       .execute();
     user.isActivate = true;
     user.activatedAt = currentTime;
+    user.updatedAt = currentTime;
+
+    return user;
+  }
+
+  async updatePassword(user: User, hashedPassword: string, queryRunner?: QueryRunner) {
+    const currentTime = new Date();
+
+    await this.dataSource
+      .createQueryBuilder(queryRunner)
+      .update(UserDb)
+      .set({ hashedPassword, updatedAt: currentTime })
+      .whereInIds(user.id)
+      .execute();
+    user.updatedAt = currentTime;
 
     return user;
   }

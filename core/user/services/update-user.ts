@@ -1,9 +1,9 @@
 import { UserActivatedEvent } from '@@common/events/user-activated';
 import { UserVerificationCreatedEvent } from '@@common/events/user-verification-created';
-import { runTransaction } from '@@common/misc/transaction';
+import { Argon2 } from '@@common/helpers/argon2';
 import { Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from '../models/user';
 import { UserMutateRepo } from '../repositories/user-mutate.repo';
 
@@ -18,17 +18,20 @@ export class UpdateUserService {
   @Inject(UserMutateRepo)
   private userMutateRepo: UserMutateRepo;
 
-  async activateUser(user: User, queryRunner?: QueryRunner) {
-    const result = await runTransaction(this.dataSource)(async (t) => {
-      user = await this.userMutateRepo.activate(user, queryRunner);
+  @Inject(Argon2)
+  private argon2: Argon2;
 
-      t.pushOnCommited(() =>
-        this.eventEmitter.emit(UserActivatedEvent.token, new UserVerificationCreatedEvent(user.id)),
-      );
+  async activateUser(user: User) {
+    user = await this.userMutateRepo.activate(user);
+    this.eventEmitter.emit(UserActivatedEvent.token, new UserVerificationCreatedEvent(user.id));
 
-      return { user };
-    });
+    return user;
+  }
 
-    return result;
+  async updatePassword(user: User, password: string) {
+    const hashedPassword = await this.argon2.hash(password);
+    user = await this.userMutateRepo.updatePassword(user, hashedPassword);
+
+    return user;
   }
 }
