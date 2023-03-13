@@ -10,6 +10,7 @@ import { RegisterService } from '../services/register';
 import { UpdateUserService } from '../services/update-user';
 import { PASSWORD_TOO_WEAK_ERROR } from '../utils/password-too-weak-error';
 import { PASSWORDS_NOT_MATCH_ERROR } from '../utils/passwords-not-match-error';
+import { USER_ALREADY_ACTIVATED_ERROR } from '../utils/user-already-activated-error';
 import { USER_ALREADY_EXIST_ERROR } from '../utils/user-already-exist-error';
 import { VERIFICATION_TOKEN_EXPIRED_ERROR } from '../utils/verification-token-expired';
 import { VERIFICATION_TOKEN_INVALID_ERROR } from '../utils/verification-token-invalid';
@@ -83,7 +84,14 @@ export class UserController {
   async resendVerification(@Req() req: Request) {
     assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
 
-    await this.registerService.resendVerification(req.user.id);
+    const user = await this.queryUserService.queryById(req.user.id);
+    assert(user, `user not found: ${req.user.id}`);
+
+    if (user.isActivate) {
+      throw USER_ALREADY_ACTIVATED_ERROR;
+    }
+
+    await this.registerService.resendVerification(user.id);
 
     return HttpStatus.CREATED;
   }
