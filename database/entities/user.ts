@@ -21,6 +21,12 @@ export class UserDb {
   @Column('varchar', { nullable: true })
   openId: string | null;
 
+  @Column('boolean')
+  isActivate: boolean;
+
+  @Column('timestamptz', { nullable: true })
+  activatedAt: Date | null;
+
   @Column('timestamptz', { default: () => 'now()' })
   createdAt: Date;
 

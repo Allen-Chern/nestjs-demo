@@ -15,16 +15,12 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { FRONTEND_URL_TOKEN } from '../config';
+import { LoginDto } from '../dto/login';
 import { AuthService } from '../services/auth';
 import { TokenManager } from '../services/token-manager';
 import { Auth } from '../utils/auth-guard';
 import { Request } from '../utils/context';
 import { FacebookPayload, GooglePayload } from '../utils/payload';
-
-class LoginInput {
-  email: string;
-  password: string;
-}
 
 @Controller('auth')
 export class AuthController {
@@ -41,7 +37,7 @@ export class AuthController {
   private frontendUrl: string;
 
   @Post('login')
-  async login(@Req() req: Request, @Res() res: Response, @Body() input: LoginInput) {
+  async login(@Req() req: Request, @Res() res: Response, @Body() input: LoginDto) {
     const user = await this.authService.validateBasicUser(input.email, input.password);
     if (!user) {
       throw new UnauthorizedException();

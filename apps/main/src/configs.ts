@@ -9,6 +9,8 @@ import {
   GOOGLE_APP_SECRET_TOKEN,
   GOOGLE_CALLBACK_URL_TOKEN,
 } from '@@core/auth/config';
+import { USER_VERIFICATION_EXPIRES_IN_MINUTES_TOKEN } from '@@core/user-verification/config';
+import { PASSWORD_REGEXP_TOKEN } from '@@core/user/config';
 import { Provider } from '@nestjs/common';
 import { envs } from './envs';
 
@@ -48,5 +50,13 @@ export const configs: Provider[] = [
   {
     provide: FRONTEND_URL_TOKEN,
     useValue: envs.FRONTEND_URL,
+  },
+  {
+    provide: PASSWORD_REGEXP_TOKEN,
+    useValue: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+  },
+  {
+    provide: USER_VERIFICATION_EXPIRES_IN_MINUTES_TOKEN,
+    useValue: 10,
   },
 ];

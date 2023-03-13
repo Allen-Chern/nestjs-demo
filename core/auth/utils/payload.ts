@@ -1,5 +1,6 @@
 export type UserPayload = {
   id: string;
+  isActivate: boolean;
   type: 'JWT';
 };
 

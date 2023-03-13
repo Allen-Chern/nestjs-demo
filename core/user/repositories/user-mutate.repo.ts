@@ -13,6 +13,7 @@ export type InsertUserInput =
       name: string;
       providerType: ProviderType.BASIC;
       openId: null;
+      isActivate: false;
     }
   | {
       email: string;
@@ -20,6 +21,7 @@ export type InsertUserInput =
       name: string;
       providerType: ProviderType.FACEBOOK | ProviderType.GOOGLE;
       openId: string;
+      isActivate: true;
     };
 
 @Injectable()
@@ -38,6 +40,8 @@ export class UserMutateRepo {
       name: input.name,
       providerType: input.providerType,
       openId: input.openId,
+      isActivate: input.isActivate,
+      activatedAt: input.isActivate ? new Date() : null,
     });
     await this.dataSource
       .createQueryBuilder(queryRunner)

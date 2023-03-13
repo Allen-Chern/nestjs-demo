@@ -13,6 +13,8 @@ export class UserFactory {
       name: userDb.name,
       providerType: userDb.providerType,
       openId: userDb.openId,
+      isActivate: userDb.isActivate,
+      activatedAt: userDb.activatedAt,
       createdAt: userDb.createdAt,
       updatedAt: userDb.updatedAt,
     });

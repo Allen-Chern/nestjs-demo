@@ -14,6 +14,7 @@ export class TokenManager {
   private async createPayload(user: User): Promise<UserPayload> {
     return {
       id: user.id,
+      isActivate: user.isActivate,
       type: 'JWT',
     };
   }
