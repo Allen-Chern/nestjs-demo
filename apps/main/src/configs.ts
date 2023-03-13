@@ -12,7 +12,6 @@ import {
 import { USER_VERIFICATION_EXPIRES_IN_MINUTES_TOKEN } from '@@core/user-verification/config';
 import { PASSWORD_REGEXP_TOKEN } from '@@core/user/config';
 import { Provider } from '@nestjs/common';
-import urlJoin from 'url-join';
 import { envs } from './envs';
 
 export const configs: Provider[] = [
@@ -34,7 +33,7 @@ export const configs: Provider[] = [
   },
   {
     provide: FACEBOOK_CALLBACK_URL_TOKEN,
-    useValue: urlJoin(envs.BACKEND_API_BASE_URL, envs.FACEBOOK_CALLBACK_PATH),
+    useValue: `${envs.BACKEND_API_BASE_URL}/${envs.FACEBOOK_CALLBACK_PATH}`,
   },
   {
     provide: GOOGLE_APP_ID_TOKEN,
@@ -46,7 +45,7 @@ export const configs: Provider[] = [
   },
   {
     provide: GOOGLE_CALLBACK_URL_TOKEN,
-    useValue: urlJoin(envs.BACKEND_API_BASE_URL, envs.GOOGLE_CALLBACK_PATH),
+    useValue: `${envs.BACKEND_API_BASE_URL}/${envs.GOOGLE_CALLBACK_PATH}`,
   },
   {
     provide: FRONTEND_DASHBOARD_URL_TOKEN,
