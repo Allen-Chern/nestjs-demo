@@ -1,7 +1,7 @@
 import { assert } from '@@common/misc/assert';
 import { QueryUserVerificationService } from '@@core/user-verification/services/query-user-verification';
 import { QueryUserService } from '@@core/user/services/query-user';
-import { Body, Controller, Get, HttpStatus, Inject, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Inject, Param, Post, Put } from '@nestjs/common';
 import { RegisterDto } from '../dto/register';
 import { PasswordService } from '../services/password';
 import { RegisterService } from '../services/register';
@@ -54,7 +54,7 @@ export class UserController {
     return HttpStatus.CREATED;
   }
 
-  @Get('verify/:token')
+  @Put('verify/:token')
   async verify(@Param('token') token: string) {
     const verification = await this.queryUserVerificationService.queryById(token);
     if (!verification) {
@@ -70,9 +70,9 @@ export class UserController {
         throw VERIFICATION_TOKEN_EXPIRED_ERROR;
       }
 
-      await this.register.activateUser(user);
+      await this.updateUserService.activateUser(user);
     }
 
-    return HttpStatus.CREATED;
+    return HttpStatus.OK;
   }
 }
