@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { ProviderType } from '../models/provider-type';
+import { User } from '../models/user';
 import { UserFactory } from './user.factory';
 
 export type InsertUserInput =
@@ -51,5 +52,20 @@ export class UserMutateRepo {
       .execute();
 
     return this.userFactory.createUser(userDb);
+  }
+
+  async activate(user: User, queryRunner?: QueryRunner) {
+    const currentTime = new Date();
+
+    await this.dataSource
+      .createQueryBuilder(queryRunner)
+      .update(UserDb)
+      .set({ isActivate: true, activatedAt: currentTime })
+      .whereInIds(user.id)
+      .execute();
+    user.isActivate = true;
+    user.activatedAt = currentTime;
+
+    return user;
   }
 }
