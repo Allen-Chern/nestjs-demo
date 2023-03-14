@@ -1,10 +1,15 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
+import {
+  SMTP_KEY_TOKEN,
+  SMTP_MAIL_FROM_TOKEN,
+  SMTP_SECRET_TOKEN,
+  SMTP_SERVICE_TOKEN,
+} from '../config';
 
 export type SendOptions = {
   to: string | string[];
   subject: string;
-  text?: string;
   html?: string;
 };
 
@@ -12,14 +17,30 @@ export type SendOptions = {
 export class Mailer {
   private logger = new Logger(Mailer.name);
 
-  @Inject(MailerService)
-  private mailerService: MailerService;
+  private transporter: nodemailer.Transporter;
+
+  @Inject(SMTP_MAIL_FROM_TOKEN)
+  smtpMailFrom: string;
+
+  constructor(
+    @Inject(SMTP_SERVICE_TOKEN) smtpService: string,
+    @Inject(SMTP_KEY_TOKEN) smtpKey: string,
+    @Inject(SMTP_SECRET_TOKEN) smtpSecret: string,
+  ) {
+    this.transporter = nodemailer.createTransport({
+      service: smtpService,
+      auth: {
+        user: smtpKey,
+        pass: smtpSecret,
+      },
+    });
+  }
 
   async send(options: SendOptions) {
-    await this.mailerService.sendMail({
+    await this.transporter.sendMail({
+      from: this.smtpMailFrom,
       to: options.to,
       subject: options.subject,
-      text: options.text,
       html: options.html,
     });
 
