@@ -1,7 +1,7 @@
+import { ACCESS_JWT_EXPIRES_IN_SECONDS_TOKEN, ACCESS_JWT_SECRET_TOKEN } from '@@common/config';
 import { Jwt } from '@@common/misc/jwt';
+import { Payload } from '@@core/auth/utils/payload';
 import { Inject, Injectable } from '@nestjs/common';
-import { ACCESS_JWT_EXPIRES_IN_SECONDS_TOKEN, ACCESS_JWT_SECRET_TOKEN } from '../config';
-import { Payload } from '../utils/payload';
 
 @Injectable()
 export class AccessJwt extends Jwt<Payload> {

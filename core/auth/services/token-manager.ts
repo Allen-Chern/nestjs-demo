@@ -1,10 +1,10 @@
 import { UserLoggedInEvent } from '@@common/events/user-logged-in';
+import { AccessJwt } from '@@common/helpers/access-jwt';
 import { User } from '@@core/user/models/user';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Response } from 'express';
 import { UserPayload } from '../utils/payload';
-import { AccessJwt } from './access-jwt';
 
 @Injectable()
 export class TokenManager {
