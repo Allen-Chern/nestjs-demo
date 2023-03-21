@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { UserDb } from './user';
 
 @Entity('login_records')
 export class LoginRecordDb {
@@ -10,4 +11,8 @@ export class LoginRecordDb {
 
   @Column('timestamptz', { default: () => 'now()' })
   createdAt: Date;
+
+  @ManyToOne(() => UserDb, (user) => user.loginRecords)
+  @JoinColumn({ name: 'userId' })
+  user: UserDb;
 }

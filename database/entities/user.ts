@@ -1,5 +1,6 @@
 import { ProviderType, ProviderTypeEnumName } from '@@database/types/provider-type';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { LoginRecordDb } from './login-record';
 
 @Entity('users')
 export class UserDb {
@@ -32,4 +33,7 @@ export class UserDb {
 
   @Column('timestamptz', { nullable: true })
   updatedAt: Date | null;
+
+  @OneToMany(() => LoginRecordDb, (loginRecord) => loginRecord.user)
+  loginRecords: LoginRecordDb[];
 }
