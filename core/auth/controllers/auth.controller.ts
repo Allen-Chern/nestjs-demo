@@ -1,17 +1,8 @@
 import { assert } from '@@common/misc/assert';
+import { FailResponse } from '@@common/misc/fail-response';
+import { SuccessResponse } from '@@common/misc/success-response';
 import { QueryUserService } from '@@core/user/services/query-user';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Inject,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { FRONTEND_DASHBOARD_URL_TOKEN } from '../config';
@@ -20,6 +11,7 @@ import { AuthService } from '../services/auth';
 import { TokenManager } from '../services/token-manager';
 import { Auth } from '../utils/auth-guard';
 import { Request } from '../utils/context';
+import { LOGIN_BAD_INPUT_ERROR } from '../utils/login-bad-input-error';
 import { FacebookPayload, GooglePayload } from '../utils/payload';
 
 @Controller('auth')
@@ -37,21 +29,21 @@ export class AuthController {
   private frontendDashboardUrl: string;
 
   @Post('login')
-  async login(@Req() req: Request, @Res() res: Response, @Body() input: LoginDto) {
+  async login(@Res() res: Response, @Body() input: LoginDto) {
     const user = await this.authService.validateBasicUser(input.email, input.password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw LOGIN_BAD_INPUT_ERROR;
     }
 
     await this.tokenManager.setToken(res, user);
 
-    res.redirect(this.frontendDashboardUrl);
+    res.send(user);
   }
 
   @UseGuards(AuthGuard('facebook'))
   @Get('facebook')
   async facebookLogin() {
-    return HttpStatus.OK;
+    return SuccessResponse;
   }
 
   @UseGuards(AuthGuard('facebook'))
@@ -69,7 +61,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google')
   async googleLogin() {
-    return HttpStatus.OK;
+    return SuccessResponse;
   }
 
   @UseGuards(AuthGuard('google'))
@@ -82,11 +74,13 @@ export class AuthController {
     res.redirect(this.frontendDashboardUrl);
   }
 
-  @Auth()
   @Get('me')
   async me(@Req() req: Request) {
-    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
-    return this.queryUserService.queryById(req.user.id);
+    if (req.user && req.user.type === 'JWT') {
+      return this.queryUserService.queryById(req.user.id);
+    }
+
+    return FailResponse;
   }
 
   @Auth()
@@ -96,6 +90,6 @@ export class AuthController {
 
     await this.tokenManager.clearToken(res);
 
-    return HttpStatus.OK;
+    res.send(SuccessResponse);
   }
 }
