@@ -4,6 +4,9 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { ProviderType } from '../models/provider-type';
 import { UserFactory } from './user.factory';
 
+type FindOptions = {
+  // add conditions when need
+};
 @Injectable()
 export class UserQueryRepo {
   @Inject(DataSource)
@@ -14,6 +17,14 @@ export class UserQueryRepo {
 
   private baseQuery(queryRunner?: QueryRunner) {
     return this.dataSource.createQueryBuilder(UserDb, 'user', queryRunner);
+  }
+
+  async find(options: FindOptions, queryRunner?: QueryRunner) {
+    const query = await this.baseQuery(queryRunner);
+
+    const userDbs = await query.getMany();
+
+    return userDbs.map((x) => this.userFactory.createUser(x));
   }
 
   async findById(id: string, queryRunner?: QueryRunner) {

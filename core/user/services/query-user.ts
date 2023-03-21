@@ -7,6 +7,11 @@ export class QueryUserService {
   @Inject(UserQueryRepo)
   private userQueryRepo: UserQueryRepo;
 
+  async query() {
+    const user = await this.userQueryRepo.find({});
+    return user;
+  }
+
   async queryById(id: string) {
     const user = await this.userQueryRepo.findById(id);
     return user;

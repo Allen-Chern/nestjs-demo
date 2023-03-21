@@ -5,13 +5,16 @@ export class User {
   id: string;
   email: string;
   name: string;
-  providerType: ProviderType;
-  openId: string | null;
   isActivate: boolean;
-  activatedAt: Date | null;
+  providerType: ProviderType;
   createdAt: Date;
-  updatedAt: Date | null;
 
   @Exclude()
   hashedPassword: string | null;
+  @Exclude()
+  openId: string | null;
+  @Exclude()
+  activatedAt: Date | null;
+  @Exclude()
+  updatedAt: Date | null;
 }

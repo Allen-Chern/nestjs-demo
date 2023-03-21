@@ -1,16 +1,19 @@
 import { Argon2 } from '@@common/helpers/argon2';
 import { assert } from '@@common/misc/assert';
+import { SuccessResponse } from '@@common/misc/success-response';
 import { Auth } from '@@core/auth/utils/auth-guard';
 import { Request } from '@@core/auth/utils/context';
 import { QueryUserVerificationService } from '@@core/user-verification/services/query-user-verification';
 import { QueryUserService } from '@@core/user/services/query-user';
-import { Body, Controller, HttpStatus, Inject, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Put, Req } from '@nestjs/common';
 import { ChangePasswordDto } from '../dto/change-password';
 import { RegisterDto } from '../dto/register';
 import { UpdateInfoDto } from '../dto/update-info';
 import { ProviderType } from '../models/provider-type';
+import { DashboardService } from '../services/dashboard';
 import { PasswordService } from '../services/password';
 import { RegisterService } from '../services/register';
+import { StatisticsService } from '../services/statistics';
 import { UpdateUserService } from '../services/update-user';
 import { PASSWORD_INCORRECT_ERROR } from '../utils/password-incorrect-error';
 import { PASSWORD_TOO_WEAK_ERROR } from '../utils/password-too-weak-error';
@@ -37,6 +40,12 @@ export class UserController {
   @Inject(UpdateUserService)
   private updateUserService: UpdateUserService;
 
+  @Inject(DashboardService)
+  private dashboardService: DashboardService;
+
+  @Inject(StatisticsService)
+  private statisticsService: StatisticsService;
+
   @Inject(Argon2)
   private argon2: Argon2;
 
@@ -62,7 +71,7 @@ export class UserController {
       password: input.password,
     });
 
-    return HttpStatus.CREATED;
+    return SuccessResponse;
   }
 
   @Put('verify/:token')
@@ -84,7 +93,7 @@ export class UserController {
       await this.updateUserService.activateUser(user);
     }
 
-    return HttpStatus.OK;
+    return SuccessResponse;
   }
 
   @Auth()
@@ -101,7 +110,7 @@ export class UserController {
 
     await this.registerService.resendVerification(user.id);
 
-    return HttpStatus.CREATED;
+    return SuccessResponse;
   }
 
   @Auth()
@@ -130,7 +139,7 @@ export class UserController {
 
     await this.updateUserService.updatePassword(user, input.newPassword);
 
-    return HttpStatus.OK;
+    return SuccessResponse;
   }
 
   @Auth()
@@ -141,8 +150,26 @@ export class UserController {
     const user = await this.queryUserService.queryById(req.user.id);
     assert(user, `user not found: ${req.user.id}`);
 
-    await this.updateUserService.updateInfo(user, input.name);
+    const result = await this.updateUserService.updateInfo(user, input.name);
 
-    return HttpStatus.OK;
+    return result;
+  }
+
+  @Auth()
+  @Get('dashboard')
+  async dashboard(@Req() req: Request) {
+    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
+
+    const loginInfo = await this.dashboardService.query(req.user.id);
+
+    return loginInfo;
+  }
+
+  @Auth()
+  @Get('statistics')
+  async statistics() {
+    const statisticsInfo = await this.statisticsService.query();
+
+    return statisticsInfo;
   }
 }
