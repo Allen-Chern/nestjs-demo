@@ -72,11 +72,11 @@ export const configs: Provider[] = [
   },
   {
     provide: FRONTEND_LOGIN_URL_TOKEN,
-    useValue: envs.FRONTEND_BASE_URL,
+    useValue: `${envs.FRONTEND_BASE_URL}/${envs.FRONTEND_LOGIN_PATH}`,
   },
   {
     provide: FRONTEND_DASHBOARD_URL_TOKEN,
-    useValue: envs.FRONTEND_BASE_URL,
+    useValue: `${envs.FRONTEND_BASE_URL}/${envs.FRONTEND_DASHBOARD_PATH}`,
   },
   {
     provide: FRONTEND_VERIFICATION_URL_TOKEN,
