@@ -8,7 +8,9 @@ export class AuthMiddleware implements NestMiddleware {
   private accessJwt: AccessJwt;
 
   use(req: Request, res: Response, next: NextFunction) {
-    const token = req.cookies.token;
+    const cookieToken = req.cookies.token;
+    const headerToken = req.headers.authorization;
+    const token = cookieToken ?? headerToken;
     if (token) {
       try {
         const payload = this.accessJwt.verify(token);
