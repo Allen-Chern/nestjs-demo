@@ -44,6 +44,7 @@ export class UserEmailService {
       user.name,
       this.verificationExpiresInMinutes,
       link,
+      verification.id,
     );
 
     await this.mailer.send({ subject, html, to: user.email });
