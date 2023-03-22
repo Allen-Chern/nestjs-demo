@@ -2,7 +2,6 @@ import { configEnvFile } from '@@common/misc/config-env-file';
 
 configEnvFile('.env');
 
-import { devCorsOptions } from '@@common/misc/dev-cors-options';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
@@ -20,9 +19,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());
 
-  if (envs.NODE_ENV !== 'production') {
-    app.enableCors(devCorsOptions);
-  }
+  const origin = envs.ENABLE_CORS_ORIGINS ? envs.ENABLE_CORS_ORIGINS.split(',') : [];
+  app.enableCors({
+    origin,
+  });
 
   await app.listen(envs.PORT);
 }
