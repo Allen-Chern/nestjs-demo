@@ -18,10 +18,7 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());
-
-  app.enableCors({
-    origin: envs.FRONTEND_BASE_URL,
-  });
+  app.enableCors();
 
   await app.listen(envs.PORT);
 }
