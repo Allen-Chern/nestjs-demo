@@ -35,9 +35,9 @@ export class AuthController {
       throw LOGIN_BAD_INPUT_ERROR;
     }
 
-    await this.tokenManager.setToken(res, user);
+    const token = await this.tokenManager.setToken(res, user);
 
-    res.send(user);
+    res.status(200).send(token);
   }
 
   @UseGuards(AuthGuard('facebook'))
@@ -90,6 +90,6 @@ export class AuthController {
 
     await this.tokenManager.clearToken(res);
 
-    res.send(SuccessResponse);
+    res.status(200).send(SuccessResponse);
   }
 }

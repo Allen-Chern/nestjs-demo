@@ -31,6 +31,8 @@ export class TokenManager {
     response.cookie('token', token, { httpOnly: true, secure: true, path: '/' });
 
     this.eventEmitter.emit(UserLoggedInEvent.token, new UserLoggedInEvent(user.id));
+
+    return token;
   }
 
   clearToken(response: Response) {
