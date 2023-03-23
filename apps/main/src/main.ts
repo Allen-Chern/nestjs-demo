@@ -18,9 +18,10 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());
+
+  const allowOrigins = envs.ALLOW_CORS_ORIGINS ? envs.ALLOW_CORS_ORIGINS.split(',') : [];
   app.enableCors({
-    origin: '*',
-    credentials: true,
+    origin: allowOrigins,
   });
 
   await app.listen(envs.PORT);
