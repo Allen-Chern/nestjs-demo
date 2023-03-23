@@ -28,7 +28,12 @@ export class TokenManager {
     const payload = await this.createPayload(user);
     const token = this.accessJwt.sign(payload);
 
-    response.cookie('token', token, { httpOnly: true, secure: true, path: '/' });
+    response.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      path: '/',
+      sameSite: 'none',
+    });
 
     this.eventEmitter.emit(UserLoggedInEvent.token, new UserLoggedInEvent(user.id));
 
@@ -36,6 +41,6 @@ export class TokenManager {
   }
 
   clearToken(response: Response) {
-    response.clearCookie('token', { httpOnly: true, secure: true, path: '/' });
+    response.clearCookie('token', { httpOnly: true, secure: true, path: '/', sameSite: 'none' });
   }
 }
