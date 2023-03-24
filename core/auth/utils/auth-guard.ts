@@ -3,23 +3,38 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  SetMetadata,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { Request } from './context';
+import { PERMISSION_ERROR } from './permission-error';
 
-/** @TODO implement AuthGuard */
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest() as Request;
+  constructor(private reflector: Reflector) {}
 
-    console.log(request.user);
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const { user } = context.switchToHttp().getRequest() as Request;
+
+    if (!user || user.type !== 'JWT') throw new UnauthorizedException();
+
+    const checkActivate =
+      this.reflector.get<boolean>('checkActivate', context.getHandler()) || false;
+    if (checkActivate && !user.isActivate) {
+      throw PERMISSION_ERROR;
+    }
 
     return true;
   }
 }
 
-export function Auth() {
+export function AccountBasicAuth() {
   return applyDecorators(UseGuards(AuthGuard));
+}
+
+export function Auth() {
+  return applyDecorators(SetMetadata('checkActivate', true), UseGuards(AuthGuard));
 }
