@@ -1,11 +1,11 @@
 import { Argon2 } from '@@common/helpers/argon2';
 import { assert } from '@@common/misc/assert';
 import { SuccessResponse } from '@@common/misc/success-response';
-import { Auth } from '@@core/auth/utils/auth-guard';
-import { Request } from '@@core/auth/utils/context';
+import { AccountBasicAuth, Auth } from '@@core/auth/utils/auth-guard';
+import { UserId } from '@@core/auth/utils/user-id';
 import { QueryUserVerificationService } from '@@core/user-verification/services/query-user-verification';
 import { QueryUserService } from '@@core/user/services/query-user';
-import { Body, Controller, Get, Inject, Param, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import { ChangePasswordDto } from '../dto/change-password';
 import { RegisterDto } from '../dto/register';
 import { UpdateInfoDto } from '../dto/update-info';
@@ -96,13 +96,11 @@ export class UserController {
     return SuccessResponse;
   }
 
-  @Auth()
+  @AccountBasicAuth()
   @Post('resendVerification')
-  async resendVerification(@Req() req: Request) {
-    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
-
-    const user = await this.queryUserService.queryById(req.user.id);
-    assert(user, `user not found: ${req.user.id}`);
+  async resendVerification(@UserId() userId: string) {
+    const user = await this.queryUserService.queryById(userId);
+    assert(user, `user not found: ${userId}`);
 
     if (user.isActivate) {
       throw USER_ALREADY_ACTIVATED_ERROR;
@@ -115,11 +113,9 @@ export class UserController {
 
   @Auth()
   @Put('changePassword')
-  async changePassword(@Req() req: Request, @Body() input: ChangePasswordDto) {
-    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
-
-    const user = await this.queryUserService.queryById(req.user.id);
-    assert(user, `user not found: ${req.user.id}`);
+  async changePassword(@UserId() userId: string, @Body() input: ChangePasswordDto) {
+    const user = await this.queryUserService.queryById(userId);
+    assert(user, `user not found: ${userId}`);
     assert(user.providerType === ProviderType.BASIC, 'invalid provider type.');
     assert(user.hashedPassword, 'hashedPassword should not be null.');
 
@@ -144,11 +140,9 @@ export class UserController {
 
   @Auth()
   @Put('updateInfo')
-  async updateInfo(@Req() req: Request, @Body() input: UpdateInfoDto) {
-    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
-
-    const user = await this.queryUserService.queryById(req.user.id);
-    assert(user, `user not found: ${req.user.id}`);
+  async updateInfo(@UserId() userId: string, @Body() input: UpdateInfoDto) {
+    const user = await this.queryUserService.queryById(userId);
+    assert(user, `user not found: ${userId}`);
 
     const result = await this.updateUserService.updateInfo(user, input.name);
 
@@ -157,10 +151,8 @@ export class UserController {
 
   @Auth()
   @Get('dashboard')
-  async dashboard(@Req() req: Request) {
-    assert(req.user && req.user.type === 'JWT', 'user should not be undefined.');
-
-    const loginInfo = await this.dashboardService.query(req.user.id);
+  async dashboard(@UserId() userId: string) {
+    const loginInfo = await this.dashboardService.query(userId);
 
     return loginInfo;
   }
